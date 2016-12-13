@@ -26,29 +26,34 @@ def main():
 	toot = zeroCB(toot)
 	save(toot,'gr')
 	forlorn = []
-	for r in range(40,80):
-		print(r)
+	for r in range(13,35):
+		print(r*2)
 		full = [[0 for i in range(len(img[0]))]for j in range(len(img))]
-		toote=copy.deepcopy(toot)
-		for i in range(len(toot[0])/4):
-			for j in range(len(toot)/4):
-				if toot[j*4][i*4]==255:
-					full = softcircle(i*4,j*4,r,toote,full)
+		for i in range(len(toot[0])/2):
+			for j in range(len(toot)/2):
+				if toot[j*2][i*2]==255:
+					full = softcircle(i*2,j*2,r*2,full)
 		for i in range(len(toot[0])):
 			for j in range(len(toot)):
-				if 170<full[j][i]:
-					n = hardcircle(i,j,r,len(img[0]),len(img))
+				if (200+r)<full[j][i]:
+					n = (i,j,r*2)
 					forlorn.append(n[:])
-					save(n,'gr'+str(r))
-		save(full,'Circles/gr'+str(r))
+					#save(n,'gr'+str(r*2))
+		save(full,'Circles/gr'+str(r*2))
 	full = [[0 for i in range(len(img[0]))]for j in range(len(img))]
 	for k in range(len(forlorn)):
-		for i in range(len(forlorn[k][0])):
-			for j in range(len(forlorn[k])):
-				if forlorn[k][j][i]==255:
-					full[j][i]=255
+		y= forlorn[k][1]
+		x= forlorn[k][0]
+		r= forlorn[k][2]
+		hardc(x,y,r,full)
 	save(toot,'gr')
 	save(full,'ending')
+
+def hardc(x,y,r,full):
+	for i in range(360):
+		if 0<int(x+r*math.cos(i))<len(full[0]) and 0<int(y+r*math.sin(i))<len(full):
+			full[int(y+r*math.sin(i))][int(x+r*math.cos(i))]=255
+	return full
 
 def hardcircle(x,y,r,dx,dy):
 	img = [[0 for i in range(dx)]for j in range(dy)]
@@ -58,11 +63,15 @@ def hardcircle(x,y,r,dx,dy):
 			img[int(y+r*math.sin(i))][int(x+r*math.cos(i))]=255
 	return img
 
-def softcircle(x,y,r,img,full):
+def softcircle(x,y,r,full):
+	addr = [[0 for i in range(len(full[0]))]for j in range(len(full))]
 	for i in range(360):
-		if 0<int(x+r*math.cos(i))<len(img[0]) and 0<int(y+r*math.sin(i))<len(img):
+		if 0<int(x+r*math.cos(i))<len(full[0]) and 0<int(y+r*math.sin(i))<len(full):
 			#print((int(y+r*math.sin(i)),int(x+r*math.cos(i))))
-			full[int(y+r*math.sin(i))][int(x+r*math.cos(i))]+=10
+			addr[int(y+r*math.sin(i))][int(x+r*math.cos(i))]=10
+	for i in range(len(full[0])):
+		for j in range(len(full)):
+			full[j][i]+=addr[j][i]
 	return full
 
 def closest(am, r):
