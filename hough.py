@@ -13,11 +13,14 @@ def main():
 	tg = 0
 	for tg in range(len(points)):
 		lf = []
-		nopts = 2+((len(points[tg])/32))
+		nopts = 10+((len(points[tg])/64))
 		print("Segment "+str(tg)+"/"+str(len(points)))
 		pts2img(points[tg],img)
-		for r in range(13,35):
-			mm = minmax(points[tg])
+		mm = minmax(points[tg])
+		tmax = max([mm[1][1]-mm[0][1]+1,mm[1][0]-mm[0][0]+1])
+		tmin = min([mm[1][1]-mm[0][1]+1,mm[1][0]-mm[0][0]+1])
+		print(((tmin/8),int(tmax/3)))
+		for r in range((tmin/3)/2,int(tmax/1.7)/2):
 			full = spatial(mm[1][1]-mm[0][1]+1,mm[1][0]-mm[0][0]+1)
 			spps=[]
 			for i in range(len(points[tg])):
@@ -49,7 +52,6 @@ def main():
 
 def save_color(nplist,outfile):
 	nplist = np.asarray(nplist,dtype='float32')
-	#nplist = cv2.cvtColor(nplist,cv2.COLOR_BGR)
 	cv2.imwrite(outfile+'.jpg',nplist)
 
 def spatial(x,y):
